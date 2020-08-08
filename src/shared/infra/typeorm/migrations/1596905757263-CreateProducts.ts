@@ -5,6 +5,37 @@ export class CreateProducts1596905757263 implements MigrationInterface {
     await queryRunner.createTable(
       new Table({
         name: 'products',
+        columns: [
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
+          {
+            name: 'name',
+            type: 'varchar',
+          },
+          {
+            name: 'price',
+            type: 'integer',
+          },
+          {
+            name: 'quantity',
+            type: 'varchar',
+          },
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'now()',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'now()',
+          },
+        ],
       }),
     );
   }
