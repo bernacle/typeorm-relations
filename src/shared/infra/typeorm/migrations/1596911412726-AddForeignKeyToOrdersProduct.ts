@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, TableForeignKey } from 'typeorm';
 
-export class AddForeignKeyToOrdersProduct1596911412726
+export default class AddForeignKeyToOrdersProduct1596911412726
   implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
     await queryRunner.createForeignKey(
