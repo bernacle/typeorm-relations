@@ -34,10 +34,6 @@ export default class CreateOrdersProducts1596905762735
             type: 'integer',
           },
           {
-            name: 'order_products',
-            type: 'varchar',
-          },
-          {
             name: 'created_at',
             type: 'timestamp',
             default: 'now()',

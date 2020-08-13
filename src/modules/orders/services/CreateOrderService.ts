@@ -33,6 +33,8 @@ class CreateOrderService {
     if (!customer) {
       throw new AppError('Customer does not exist', 404);
     }
+    await this.productsRepository.updateQuantity(products);
+
     const fullProducts = await this.productsRepository.findAllById(products);
     const formattedProducts = fullProducts.map(product => ({
       product_id: product.id,

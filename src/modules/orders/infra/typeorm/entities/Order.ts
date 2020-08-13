@@ -14,7 +14,7 @@ import OrdersProducts from '@modules/orders/infra/typeorm/entities/OrdersProduct
 
 @Entity('orders')
 class Order {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ManyToOne(() => Customer)
@@ -24,7 +24,9 @@ class Order {
   @Column()
   customer_id: string;
 
-  @OneToMany(type => OrdersProducts, orderProduct => orderProduct.product)
+  @OneToMany(type => OrdersProducts, orderProduct => orderProduct.order, {
+    cascade: true,
+  })
   order_products: OrdersProducts[];
 
   @CreateDateColumn()
