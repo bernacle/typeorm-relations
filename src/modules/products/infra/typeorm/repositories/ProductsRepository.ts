@@ -3,7 +3,7 @@ import { getRepository, Repository } from 'typeorm';
 import IProductsRepository from '@modules/products/repositories/IProductsRepository';
 import ICreateProductDTO from '@modules/products/dtos/ICreateProductDTO';
 import IUpdateProductsQuantityDTO from '@modules/products/dtos/IUpdateProductsQuantityDTO';
-// import AppError from '@shared/errors/AppError';
+import AppError from '@shared/errors/AppError';
 import Product from '../entities/Product';
 
 interface IFindProducts {
@@ -45,16 +45,27 @@ class ProductsRepository implements IProductsRepository {
   }
 
   public async findAllById(products: IFindProducts[]): Promise<Product[]> {
-    const findProducts = this.ormRepository.findByIds(products);
-    return findProducts;
+    try {
+      const findProducts = await this.ormRepository.findByIds(products);
+      return findProducts;
+    } catch (err) {
+      throw new AppError('Product does not exist', 400);
+    }
   }
 
   public async updateQuantity(
     products: IUpdateProductsQuantityDTO[],
   ): Promise<Product[]> {
-    const findProducts = await this.ormRepository.save(products);
+    const findProducts = await this.ormRepository.findByIds(products);
 
-    return findProducts;
+    const updatedProducts = findProducts.map((product, index) => ({
+      ...product,
+      quantity: product.quantity - products[index].quantity,
+    }));
+
+    this.ormRepository.save(updatedProducts);
+
+    return updatedProducts;
   }
 }
 

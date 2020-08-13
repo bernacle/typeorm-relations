@@ -31,23 +31,30 @@ class CreateOrderService {
   public async execute({ customer_id, products }: IRequest): Promise<Order> {
     const customer = await this.customersRepository.findById(customer_id);
     if (!customer) {
-      throw new AppError('Customer does not exist', 404);
+      throw new AppError('Customer does not exist', 400);
     }
-    await this.productsRepository.updateQuantity(products);
 
-    const fullProducts = await this.productsRepository.findAllById(products);
-    const formattedProducts = fullProducts.map(product => ({
+    const checkProducts = await this.productsRepository.findAllById(products);
+    if (checkProducts.length !== products.length) {
+      throw new AppError('Some products does not exist');
+    }
+
+    checkProducts.forEach((product, index) => {
+      if (product.quantity < products[index].quantity) {
+        throw new AppError('Product is out of stock');
+      }
+    });
+    await this.productsRepository.updateQuantity(products);
+    const formattedProducts = checkProducts.map((product, index) => ({
       product_id: product.id,
-      quantity: product.quantity,
+      quantity: products[index].quantity,
       price: product.price,
     }));
 
-    const orderDTO = {
+    const order = await this.ordersRepository.create({
       customer,
       products: formattedProducts,
-    } as ICreateOrderDTO;
-
-    const order = await this.ordersRepository.create(orderDTO);
+    });
 
     return order;
   }
