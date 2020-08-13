@@ -24,7 +24,7 @@ class Order {
   @Column()
   customer_id: string;
 
-  @OneToMany(type => OrdersProducts, orderProduct => orderProduct.order, {
+  @OneToMany(() => OrdersProducts, orderProduct => orderProduct.order, {
     cascade: true,
   })
   order_products: OrdersProducts[];

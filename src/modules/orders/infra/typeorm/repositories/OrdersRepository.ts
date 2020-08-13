@@ -13,8 +13,6 @@ class OrdersRepository implements IOrdersRepository {
   }
 
   public async create({ customer, products }: ICreateOrderDTO): Promise<Order> {
-    console.log(products);
-
     const order = this.ormRepository.create({
       customer,
       order_products: products,
@@ -30,7 +28,9 @@ class OrdersRepository implements IOrdersRepository {
   }
 
   public async findById(id: string): Promise<Order | undefined> {
-    const order = this.findById(id);
+    const order = this.ormRepository.findOne(id, {
+      relations: ['order_products'],
+    });
 
     if (!order) {
       throw new AppError('Order not found', 404);
